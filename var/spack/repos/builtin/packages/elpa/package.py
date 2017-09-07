@@ -81,7 +81,7 @@ class Elpa(AutotoolsPackage):
 
     def configure_args(self):
         options = []
-        if spec.satisfies('platform=darwin'):
+        if self.spec.satisfies('platform=darwin'):
             options.extend([
                 '--disable-sse-assembly',
                 '--disable-avx',
