@@ -1,5 +1,5 @@
 ##############################################################################
-# Copyright (c) 2013-2017, Lawrence Livermore National Security, LLC.
+# Copyright (c) 2013-2016, Lawrence Livermore National Security, LLC.
 # Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
@@ -32,8 +32,9 @@ class Elpa(AutotoolsPackage):
     homepage = 'http://elpa.mpcdf.mpg.de/'
     url = 'http://elpa.mpcdf.mpg.de/elpa-2015.11.001.tar.gz'
 
+    version('2017.05.002', 'd0abc1ac1f493f93bf5e30ec8ab155dc')
     version('2016.11.001.pre', '5656fd066cf0dcd071dbcaf20a639b37')
-    version('2016.05.004', 'c0dd3a53055536fc3a2a221e78d8b376', preferred=True)
+    version('2016.05.004', 'c0dd3a53055536fc3a2a221e78d8b376')
     version('2016.05.003', '88a9f3f3bfb63e16509dd1be089dcf2c')
     version('2015.11.001', 'de0f35b7ee7c971fd0dca35c900b87e6')
 
@@ -43,6 +44,8 @@ class Elpa(AutotoolsPackage):
     depends_on('blas')
     depends_on('lapack')
     depends_on('scalapack')
+
+    depends_on('gmake@4.2.1:', when='platform=darwin')
 
     def url_for_version(self, version):
         t = 'http://elpa.mpcdf.mpg.de/html/Releases/{0}/elpa-{0}.tar.gz'
@@ -61,6 +64,7 @@ class Elpa(AutotoolsPackage):
         )
 
     build_directory = 'spack-build'
+    parallel = False
 
     def setup_environment(self, spack_env, run_env):
         # TODO: set optimum flags for platform+compiler combo, see
@@ -77,6 +81,12 @@ class Elpa(AutotoolsPackage):
 
     def configure_args(self):
         options = []
+        if spec.satisfies('platform=darwin'):
+            options.extend([
+                '--disable-sse-assembly',
+                '--disable-avx',
+                '--disable-avx2'
+            ])
         if '+openmp' in self.spec:
             options.append("--enable-openmp")
         return options
