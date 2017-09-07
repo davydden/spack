@@ -90,7 +90,8 @@ class Elpa(AutotoolsPackage):
             '--with-mpi=yes',
             'FCFLAGS=-O3 -march=native',
             'CFLAGS=-O3 -march=native',
-            'SCALAPACK_LDFLAGS=%s' % math_libs.ld_flags
+            'SCALAPACK_LDFLAGS=%s' % math_libs.ld_flags,
+            '--disable-legacy'
         ]
 
         if spec.satisfies('platform=darwin'):
