@@ -52,6 +52,10 @@ class Elpa(AutotoolsPackage):
     depends_on('automake', type='build', when='platform=darwin')
     depends_on('libtool', type='build', when='platform=darwin')
     depends_on('perl', type='build', when='platform=darwin')
+    depends_on('m4', type='build', when='platform=darwin')
+    depends_on('sed', type='build', when='platform=darwin')
+
+    patch('macos.patch', when='platform=darwin')
 
     def url_for_version(self, version):
         t = 'http://elpa.mpcdf.mpg.de/html/Releases/{0}/elpa-{0}.tar.gz'
@@ -62,15 +66,12 @@ class Elpa(AutotoolsPackage):
     # override default implementation which returns static lib
     @property
     def libs(self):
-
         libname = 'libelpa_openmp' if '+openmp' in self.spec else 'libelpa'
-
         return find_libraries(
             libname, root=self.prefix, shared=True, recurse=True
         )
 
     build_directory = 'spack-build'
-    # parallel = False
 
     def setup_environment(self, spack_env, run_env):
         spec = self.spec

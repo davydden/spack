@@ -1,0 +1,15 @@
+diff --git a/fdep/fortran_dependencies.pl b/fdep/fortran_dependencies.pl
+index 0e644ef..4082047 100755
+--- a/fdep/fortran_dependencies.pl
++++ b/fdep/fortran_dependencies.pl
+@@ -44,6 +44,10 @@ my $target = shift;
+
+ foreach my $file (<>) {
+ 	chomp($file);
++  # workaround for macOS, no idea where this comes from!
++  if ($file eq "-n") {
++    next;
++  }
+ 	if (exists $files{$file}) {
+ 		next;
+ 	} else {
