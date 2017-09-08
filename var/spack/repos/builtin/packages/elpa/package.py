@@ -47,12 +47,11 @@ class Elpa(AutotoolsPackage):
     depends_on('lapack')
     depends_on('scalapack')
 
-    depends_on('gmake@4.2.1:', when='platform=darwin')
-    depends_on('gawk', when='platform=darwin')
-    depends_on("autoconf", type='build')
-    depends_on("automake", type='build')
-    depends_on("libtool", type='build')
-    depends_on("perl", type='build')
+    depends_on('gmake@4.2.1:', type='build', when='platform=darwin')
+    depends_on('autoconf', type='build', when='platform=darwin')
+    depends_on('automake', type='build', when='platform=darwin')
+    depends_on('libtool', type='build', when='platform=darwin')
+    depends_on('perl', type='build', when='platform=darwin')
 
     def url_for_version(self, version):
         t = 'http://elpa.mpcdf.mpg.de/html/Releases/{0}/elpa-{0}.tar.gz'
