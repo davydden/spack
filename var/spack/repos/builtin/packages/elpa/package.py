@@ -73,33 +73,33 @@ class Elpa(AutotoolsPackage):
     build_directory = 'spack-build'
     # parallel = False
 
-    # def setup_environment(self, spack_env, run_env):
-    #    spack_env.set('SCALAPACK_LDFLAGS', math_libs.ld_flags())
+    def setup_environment(self, spack_env, run_env):
+        spec = self.spec
+
+        spack_env.set('CC', spec['mpi'].mpicc)
+        spack_env.set('FC', spec['mpi'].mpifc)
+        spack_env.set('CXX', spec['mpi'].mpicxx)
+
+        spack_env.append_flags('LDFLAGS', spec['lapack'].libs.search_flags)
+        spack_env.append_flags('LIBS', spec['lapack'].libs.link_flags)
+        spack_env.set('SCALAPACK_LDFLAGS', spec['scalapack'].libs.joined())
 
     def configure_args(self):
         # TODO: set optimum flags for platform+compiler combo, see
         # https://github.com/hfp/xconfigure/tree/master/elpa
-        spec = self.spec
-        math_libs = spec['scalapack'].libs + spec['lapack'].libs + \
-            spec['blas'].libs
-
+        # also see:
+        # https://src.fedoraproject.org/cgit/rpms/elpa.git/
+        # https://packages.qa.debian.org/e/elpa.html
         options = [
-            'CC=%s' % spec['mpi'].mpicc,
-            'FC=%s' % spec['mpi'].mpifc,
-            'CXX=%s' % spec['mpi'].mpicxx,
-            '--with-mpi=yes',
-            'FCFLAGS=-O3 -march=native',
-            'CFLAGS=-O3 -march=native',
-            'SCALAPACK_LDFLAGS=%s' % math_libs.ld_flags,
-            '--disable-legacy'
+            'FCFLAGS=-O2 -march=native -ffree-line-length-none',
+            'CFLAGS=-O2 -march=native',
+            '--with-mpi=yes'
         ]
-
-        if spec.satisfies('platform=darwin'):
+        if self.spec.satisfies('platform=darwin'):
             options.extend([
                 '--disable-sse-assembly',
-                '--disable-avx',
                 '--disable-avx2'
             ])
-        if '+openmp' in spec:
-            options.append("--enable-openmp")
+        if '+openmp' in self.spec:
+            options.append('--enable-openmp')
         return options
