@@ -1,15 +1,13 @@
-diff --git a/fdep/fortran_dependencies.pl b/fdep/fortran_dependencies.pl
-index 0e644ef..4082047 100755
---- a/fdep/fortran_dependencies.pl
-+++ b/fdep/fortran_dependencies.pl
-@@ -44,6 +44,10 @@ my $target = shift;
+diff --git a/fdep/fortran_dependencies.mk b/fdep/fortran_dependencies.mk
+index ecf1349..70939d5 100644
+--- a/fdep/fortran_dependencies.mk
++++ b/fdep/fortran_dependencies.mk
+@@ -105,7 +105,7 @@ endef
 
- foreach my $file (<>) {
- 	chomp($file);
-+  # workaround for macOS, no idea where this comes from!
-+  if ($file eq "-n") {
-+    next;
-+  }
- 	if (exists $files{$file}) {
- 		next;
- 	} else {
+ # $1 program
+ define program_dependencies
+-	$(_f90_only_verbose)echo -n > .$p.dep.args
++	$(_f90_only_verbose)/bin/echo -n > .$p.dep.args
+ 	$(foreach argument,$(_$p_use_mods) $(_$p_def_mods) $(foreach l,$(call recursive_lib_deps,$p),$(_$l_use_mods) $(_$l_def_mods)),$(call append_to,$(argument),.$p.dep.args))
+ 	$(_f90_only_verbose)$(top_srcdir)/fdep/fortran_dependencies.pl $p < .$p.dep.args >> $@ || { rm $@; exit 1; }
+ 	$(_f90_only_verbose)rm -f .$p.dep.args
