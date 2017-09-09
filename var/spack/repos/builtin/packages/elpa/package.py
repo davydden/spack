@@ -93,7 +93,8 @@ class Elpa(AutotoolsPackage):
         options = [
             'FCFLAGS=-O2 -march=native -ffree-line-length-none',
             'CFLAGS=-O2 -march=native',
-            '--with-mpi=yes'
+            '--with-mpi=yes',
+            'FORTRAN_CPP=%s' % self.spec['mpi'].mpifc
         ]
         if self.spec.satisfies('platform=darwin'):
             options.extend([
