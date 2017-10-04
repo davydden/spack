@@ -71,12 +71,10 @@ class Exasp2(MakefilePackage):
         #   briefly but not rigoruously tested. Using generic blas approach to
         #   meet Spack requirements
         targets.append('BLAS=GENERIC_SPACKBLAS')
-        math_libs = str(spec['lapack'].libs)
-        math_libs += ' ' + str(spec['lapack'].libs)
-        targets.append('SPACKBLASLIBFLAGS=' + math_libs)
-        math_includes = spec['lapack'].prefix.include
-        math_includes += " -I" + spec['blas'].prefix.include
-        targets.append('SPACKBLASINCLUDES=' + math_includes)
+        math_libs = spec['lapack'].libs + spec['blas'].libs
+        math_header = spec['lapack'].headers + spec['blas'].headers
+        targets.append('SPACKBLASLIBFLAGS=' + math_libs.ld_flags)
+        targets.append('SPACKBLASINCLUDES=' + math_header.cpp_flags)
         # And BML
         bmlLibDirs = spec['bml'].libs.directories[0]
         targets.append('BML_PATH=' + bmlLibDirs)
