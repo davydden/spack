@@ -157,3 +157,14 @@ class Nwchem(Package):
             with open(".nwchemrc", 'w') as f:
                 f.write(nwchemrc)
             install(".nwchemrc", share_path)
+
+        # Compile auxiliary program to convert binary .movecs output to ASCII
+        with working_dir(join_path('contrib', 'mov2asc')):
+            # Make file does not seem to care abot MACX64 target
+            if sys.platform == 'darwin':
+                make('FFLAGS = -fdefault-integer-8', *args)
+            else:
+                make(*args)
+
+            install('mov2asc', prefix.bin)
+            install('asc2mov', prefix.bin)
