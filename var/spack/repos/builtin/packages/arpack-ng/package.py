@@ -73,6 +73,8 @@ class ArpackNg(Package):
     patch('make_install.patch', when='@3.4.0')
     patch('parpack_cmake.patch', when='@3.4.0')
 
+    patch('no_terminal_output.patch', when='@3.5.0:')
+
     depends_on('blas')
     depends_on('lapack')
     depends_on('automake', when='@3.3.0', type='build')
