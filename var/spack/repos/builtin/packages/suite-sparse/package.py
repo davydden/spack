@@ -111,7 +111,7 @@ class SuiteSparse(Package):
         if 'tbb' in spec:
             make_args += [
                 'SPQR_CONFIG=-DHAVE_TBB',
-                'TBB=-L%s -ltbb' % spec['tbb'].prefix.lib,
+                'TBB=%s' % spec['tbb'].libs.ld_flags,
             ]
 
         make('install', *make_args)
