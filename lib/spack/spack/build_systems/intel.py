@@ -868,6 +868,7 @@ class IntelPackage(PackageBase):
                 'MPIF77': os.path.join(bindir, 'mpiifort'),
                 'MPIF90': os.path.join(bindir, 'mpiifort'),
                 'MPIFC':  os.path.join(bindir, 'mpiifort'),
+                'MPIEXEC': os.path.join(bindir, 'mpiexec'),
             }
         else:
             wrapper_vars = {
@@ -876,6 +877,7 @@ class IntelPackage(PackageBase):
                 'MPIF77': os.path.join(bindir, 'mpif77'),
                 'MPIF90': os.path.join(bindir, 'mpif90'),
                 'MPIFC':  os.path.join(bindir, 'mpif90'),
+                'MPIEXEC': os.path.join(bindir, 'mpiexec'),
             }
         # debug_print("wrapper_vars =", wrapper_vars)
         return wrapper_vars
@@ -1080,6 +1082,7 @@ class IntelPackage(PackageBase):
             self.spec.mpicxx = compiler_wrapper_commands['MPICXX']
             self.spec.mpif77 = compiler_wrapper_commands['MPIF77']
             self.spec.mpifc  = compiler_wrapper_commands['MPIFC']
+            self.spec.mpiexec = compiler_wrapper_commands['MPIEXEC']
             debug_print(("spec '%s' received .mpi* properties:" % self.spec),
                         compiler_wrapper_commands)
 
