@@ -5,6 +5,7 @@
 
 import sys
 from spack import *
+from spack.error import NoLibrariesError
 
 
 class Mesa(AutotoolsPackage):
@@ -189,6 +190,7 @@ class Mesa(AutotoolsPackage):
                                   shared=True, recursive=False)
             if libs:
                 return libs
+        raise NoLibrariesError(self.name, self.prefix)
 
     @when('^python@3:')
     def setup_environment(self, spack_env, run_env):

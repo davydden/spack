@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack import *
+from spack.error import NoLibrariesError
 
 
 class Opengl(Package):
@@ -68,3 +69,4 @@ class Opengl(Package):
                                   shared=True, recursive=False)
             if libs:
                 return libs
+        raise NoLibrariesError(self.name, self.prefix)

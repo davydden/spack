@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack import *
+from spack.error import NoLibrariesError
 import os
 from glob import glob
 
@@ -56,6 +57,9 @@ class Libxsmm(MakefilePackage):
         if len(result) == 0:
             result = find_libraries(['libxsmm', 'libxsmmf'], root=self.prefix,
                                     shared=False, recursive=True)
+        if not result:
+            raise NoLibrariesError(self.name, self.prefix)
+
         return result
 
     def edit(self, spec, prefix):
