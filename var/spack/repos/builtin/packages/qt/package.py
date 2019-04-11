@@ -17,6 +17,7 @@ class Qt(Package):
     list_url = 'http://download.qt.io/archive/qt/'
     list_depth = 3
 
+    version('5.12.2', '59b8cb4e728450b21224dcaaa40eb25bafc5196b6988f2225c394c6b7f881ff5')
     version('5.11.3', '859417642713cee2493ee3646a7fee782c9f1db39e41d7bb1322bba0c5f0ff4d')
     version('5.11.2', 'c6104b840b6caee596fa9a35bc5f57f67ed5a99d6a36497b6fe66f990a53ca81')
     version('5.10.0', 'c5e275ab0ed7ee61d0f4b82cd471770d')
@@ -52,7 +53,7 @@ class Qt(Package):
 
     # fix installation of pkgconfig files
     # see https://github.com/Homebrew/homebrew-core/pull/5951
-    patch('restore-pc-files.patch', when='@5.9: platform=darwin')
+    patch('restore-pc-files.patch', when='@5.9:5.11 platform=darwin')
 
     patch('qt3accept.patch', when='@3.3.8b')
     patch('qt3krell.patch', when='@3.3.8b+krellpatch')
@@ -110,9 +111,7 @@ class Qt(Package):
     depends_on("harfbuzz", when='@5:')
 
     # Core options:
-    # -doubleconversion  [system/qt/no]
     # -iconv             [posix/sun/gnu/no] (Unix only)
-    # -pcre              [system/qt]
 
     # Gui, printing, widget options:
     # -harfbuzz          [system/qt/no]
@@ -244,6 +243,7 @@ class Qt(Package):
     @property
     def common_config_args(self):
         # incomplete list is here http://doc.qt.io/qt-5/configure-options.html
+        openssl = self.spec['openssl']
         config_args = [
             '-prefix', self.prefix,
             '-v',
@@ -253,6 +253,8 @@ class Qt(Package):
             '-shared',
             '-confirm-license',
             '-openssl-linked',
+            '{0}'.format(openssl.libs.search_flags),
+            '{0}'.format(openssl.headers.include_flags),
             '-optimized-qmake',
             '-system-freetype',
             '-I{0}/freetype2'.format(self.spec['freetype'].prefix.include),
@@ -261,11 +263,25 @@ class Qt(Package):
         ]
 
         if self.spec.satisfies('@5:'):
-            config_args.append('-system-harfbuzz')
-            config_args.append('-system-pcre')
+            pcre = self.spec['pcre'] if self.spec.satisfies('@5.0:5.8') \
+                else self.spec['pcre2']
+            harfbuzz = self.spec['harfbuzz']
+            config_args.extend([
+                '-system-harfbuzz',
+                '{0}'.format(harfbuzz.libs.search_flags),
+                '{0}'.format(harfbuzz.headers.include_flags),
+                '-system-pcre',
+                '{0}'.format(pcre.libs.search_flags),
+                '{0}'.format(pcre.headers.include_flags)
+            ])
 
         if self.spec.satisfies('@5.7:'):
-            config_args.append('-system-doubleconversion')
+            dc = self.spec['double-conversion']
+            config_args.extend([
+                '-system-doubleconversion',
+                '{0}'.format(dc.libs.search_flags),
+                '{0}'.format(dc.headers.include_flags)
+            ])
 
         if sys.platform != 'darwin':
             config_args.append('-fontconfig')
@@ -274,9 +290,15 @@ class Qt(Package):
             config_args.append('-no-openvg')
         else:
             # FIXME: those could work for other versions
+            png = self.spec['libpng']
+            jpeg = self.spec['jpeg']
             config_args.extend([
                 '-system-libpng',
+                '{0}'.format(png.libs.search_flags),
+                '{0}'.format(png.headers.include_flags),
                 '-system-libjpeg',
+                '{0}'.format(jpeg.libs.search_flags),
+                '{0}'.format(jpeg.headers.include_flags),
                 '-system-zlib'
             ])
 
@@ -304,11 +326,12 @@ class Qt(Package):
 
         if '@5:' in self.spec and sys.platform == 'darwin':
             config_args.extend([
-                '-no-xinput2',
                 '-no-xcb-xlib',
                 '-no-pulseaudio',
                 '-no-alsa',
             ])
+            if self.spec.satisfies('@:5.11'):
+                config_args.append('-no-xinput2')
 
         # FIXME: else: -system-xcb ?
 
