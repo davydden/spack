@@ -194,7 +194,8 @@ class Dealii(CMakePackage, CudaPackage):
                   'without petsc.')
 
     conflicts('+adol-c', when='^trilinos+chaco',
-              msg='symbol clash between the ADOL-C library and Trilinos SEACAS Chaco.')
+              msg='symbol clash between the ADOL-C library and '
+                  'Trilinos SEACAS Chaco.')
 
     # interfaces added in 8.5.0:
     for p in ['gsl', 'python']:
